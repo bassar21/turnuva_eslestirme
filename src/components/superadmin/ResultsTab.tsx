@@ -15,7 +15,7 @@ export async function ResultsTab({ tournament }: { tournament: TournamentSlug })
       <TournamentSwitcher current={tournament} tab="sonuclar" />
 
       {rounds.length === 0 && (
-        <p className="rounded-xl border border-neutral-200 bg-neutral-50 p-6 text-center text-neutral-500">
+        <p className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-400">
           Henüz tur yok.
         </p>
       )}
@@ -31,9 +31,9 @@ async function RoundResults({ roundId, title }: { roundId: number; title: string
   const { complete, pendingCount, names } = await getRoundWinners(roundId);
 
   return (
-    <div className="space-y-3 rounded-xl border border-neutral-200 bg-white p-5 shadow-sm">
+    <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex items-center justify-between">
-        <h4 className="font-semibold text-neutral-800">{title}</h4>
+        <h4 className="font-semibold text-slate-900">{title}</h4>
         {complete ? (
           <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
             Tamamlandı
@@ -46,7 +46,7 @@ async function RoundResults({ roundId, title }: { roundId: number; title: string
       </div>
 
       <div>
-        <p className="mb-2 text-xs font-semibold text-neutral-500 uppercase">
+        <p className="mb-2 text-xs font-semibold tracking-wide text-slate-400 uppercase">
           Bir üst tur için kazananlar {!complete && "(eksik — tamamlanınca güncellenir)"}
         </p>
         <CopyBox text={formatWinnersText(names)} json={formatWinnersJSON(names)} />

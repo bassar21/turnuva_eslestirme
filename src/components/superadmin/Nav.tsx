@@ -11,15 +11,15 @@ const TABS: { id: string; label: string }[] = [
 
 export function Nav({ current }: { current: string }) {
   return (
-    <nav className="flex flex-wrap gap-2 border-b border-neutral-200 pb-4">
+    <nav className="flex flex-wrap gap-1.5">
       {TABS.map((tab) => (
         <Link
           key={tab.id}
           href={`/superadmin?tab=${tab.id}`}
-          className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+          className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
             current === tab.id
-              ? "bg-neutral-900 text-white"
-              : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+              ? "bg-slate-900 text-white shadow-sm"
+              : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"
           }`}
         >
           {tab.label}

@@ -6,15 +6,15 @@ export function ActionButton({
   variant?: "primary" | "danger" | "muted";
 }) {
   const styles = {
-    primary: "bg-neutral-900 text-white hover:bg-neutral-700",
-    danger: "bg-red-600 text-white hover:bg-red-500",
-    muted: "bg-neutral-100 text-neutral-600 hover:bg-neutral-200",
+    primary: "bg-slate-900 text-white shadow-sm hover:bg-slate-800",
+    danger: "bg-red-600 text-white shadow-sm hover:bg-red-500",
+    muted: "bg-slate-100 text-slate-600 hover:bg-slate-200",
   }[variant];
 
   return (
     <button
       type="submit"
-      className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${styles}`}
+      className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${styles}`}
     >
       {children}
     </button>

@@ -29,39 +29,44 @@ async function TournamentCard({ tournament }: { tournament: TournamentRow }) {
   const pending = matches.filter((m) => m.status === "pending").length;
 
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-neutral-900">{meta.name}</h3>
-      <dl className="mt-4 space-y-2 text-sm text-neutral-600">
-        <Row label="Katılımcı" value={String(participantCount)} />
-        <Row label="Tur sayısı" value={String(rounds.length)} />
-        <Row label="Sonuç bekleyen maç" value={String(pending)} />
-      </dl>
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className={`bg-gradient-to-br ${meta.color} px-6 py-4`}>
+        <h3 className="text-lg font-bold text-white">{meta.name}</h3>
+      </div>
 
-      <div className="mt-5 flex items-center justify-between border-t border-neutral-100 pt-4">
-        <span
-          className={`rounded-full px-3 py-1 text-xs font-semibold ${
-            tournament.registration_open
-              ? "bg-green-100 text-green-800"
-              : "bg-neutral-200 text-neutral-600"
-          }`}
-        >
-          Kayıt {tournament.registration_open ? "Açık" : "Kapalı"}
-        </span>
-        <form action={toggleRegistration.bind(null, slug, !tournament.registration_open)}>
-          <ActionButton variant={tournament.registration_open ? "danger" : "primary"}>
-            {tournament.registration_open ? "Kaydı Kapat" : "Kaydı Aç"}
-          </ActionButton>
-        </form>
+      <div className="p-6">
+        <div className="grid grid-cols-3 gap-3 text-center">
+          <Stat label="Katılımcı" value={participantCount} />
+          <Stat label="Tur" value={rounds.length} />
+          <Stat label="Bekleyen maç" value={pending} />
+        </div>
+
+        <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+          <span
+            className={`rounded-full px-3 py-1 text-xs font-semibold ${
+              tournament.registration_open
+                ? "bg-green-100 text-green-800"
+                : "bg-slate-200 text-slate-600"
+            }`}
+          >
+            Kayıt {tournament.registration_open ? "Açık" : "Kapalı"}
+          </span>
+          <form action={toggleRegistration.bind(null, slug, !tournament.registration_open)}>
+            <ActionButton variant={tournament.registration_open ? "danger" : "primary"}>
+              {tournament.registration_open ? "Kaydı Kapat" : "Kaydı Aç"}
+            </ActionButton>
+          </form>
+        </div>
       </div>
     </div>
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="flex justify-between">
-      <dt>{label}</dt>
-      <dd className="font-medium text-neutral-900">{value}</dd>
+    <div className="rounded-xl bg-slate-50 px-2 py-3">
+      <div className="text-xl font-bold text-slate-900">{value}</div>
+      <div className="mt-0.5 text-[11px] font-medium text-slate-500">{label}</div>
     </div>
   );
 }

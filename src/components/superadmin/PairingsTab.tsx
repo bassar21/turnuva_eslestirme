@@ -19,7 +19,7 @@ export async function PairingsTab({ tournament }: { tournament: TournamentSlug }
 
       <div className="space-y-3">
         {rounds.length === 0 && (
-          <p className="rounded-xl border border-neutral-200 bg-neutral-50 p-6 text-center text-neutral-500">
+          <p className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-400">
             Henüz tur oluşturulmadı.
           </p>
         )}
@@ -27,29 +27,36 @@ export async function PairingsTab({ tournament }: { tournament: TournamentSlug }
           const byeCount = round.matches.filter((m) => m.status === "bye").length;
           const doneCount = round.matches.filter((m) => m.status === "done").length;
           return (
-            <div key={round.id} className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-semibold text-neutral-800">{round.title}</h4>
-                  <p className="text-xs text-neutral-500">
-                    {round.matches.length} maç · {byeCount} bay · {doneCount} sonuçlanmış ·{" "}
-                    {round.published ? (
-                      <span className="font-medium text-green-700">Yayında</span>
-                    ) : (
-                      <span className="font-medium text-neutral-500">Taslak</span>
-                    )}
-                  </p>
+            <div
+              key={round.id}
+              className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+            >
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="font-semibold text-slate-900">{round.title}</h4>
+                  {round.published ? (
+                    <span className="rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-semibold text-green-700">
+                      Yayında
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500">
+                      Taslak
+                    </span>
+                  )}
                 </div>
-                <div className="flex gap-2">
-                  <form action={publishRoundAction.bind(null, round.id, !round.published)}>
-                    <ActionButton variant={round.published ? "muted" : "primary"}>
-                      {round.published ? "Yayından Kaldır" : "Yayınla"}
-                    </ActionButton>
-                  </form>
-                  <form action={deleteRoundAction.bind(null, round.id)}>
-                    <ActionButton variant="danger">Sil</ActionButton>
-                  </form>
-                </div>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  {round.matches.length} maç · {byeCount} bay · {doneCount} sonuçlanmış
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <form action={publishRoundAction.bind(null, round.id, !round.published)}>
+                  <ActionButton variant={round.published ? "muted" : "primary"}>
+                    {round.published ? "Yayından Kaldır" : "Yayınla"}
+                  </ActionButton>
+                </form>
+                <form action={deleteRoundAction.bind(null, round.id)}>
+                  <ActionButton variant="danger">Sil</ActionButton>
+                </form>
               </div>
             </div>
           );

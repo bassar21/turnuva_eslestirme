@@ -14,7 +14,7 @@ export function ResetPasswordForm({ adminId }: { adminId: number }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded-lg bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:bg-neutral-200"
+        className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-200"
       >
         Şifre Sıfırla
       </button>
@@ -30,12 +30,12 @@ export function ResetPasswordForm({ adminId }: { adminId: number }) {
         placeholder="Yeni şifre"
         required
         minLength={6}
-        className="w-32 rounded-lg border border-neutral-300 px-2 py-1 text-xs focus:border-neutral-500 focus:outline-none"
+        className="w-32 rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs shadow-sm transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none"
       />
       <button
         type="submit"
         disabled={pending}
-        className="rounded-lg bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
+        className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-50"
       >
         Kaydet
       </button>

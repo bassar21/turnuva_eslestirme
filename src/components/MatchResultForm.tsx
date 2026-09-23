@@ -19,7 +19,10 @@ export function MatchResultForm({
   const [state, formAction, pending] = useActionState(submitMatchResultAction, initialState);
 
   return (
-    <form action={formAction} className="flex flex-wrap items-end gap-3 rounded-lg bg-neutral-50 p-3">
+    <form
+      action={formAction}
+      className="flex flex-wrap items-end gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3.5"
+    >
       <input type="hidden" name="matchId" value={matchId} />
 
       <NumberField label="Oynanan set" name="setsPlayed" defaultValue={existing?.setsPlayed} />
@@ -29,13 +32,21 @@ export function MatchResultForm({
       <button
         type="submit"
         disabled={pending}
-        className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-700 disabled:opacity-50"
+        className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {pending ? "Kaydediliyor…" : existing ? "Güncelle" : "Kaydet"}
       </button>
 
-      {state.error && <p className="w-full text-sm text-red-700">{state.error}</p>}
-      {state.success && <p className="w-full text-sm text-green-700">Kaydedildi.</p>}
+      {state.error && (
+        <p className="w-full rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 ring-1 ring-red-100">
+          {state.error}
+        </p>
+      )}
+      {state.success && (
+        <p className="w-full rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700 ring-1 ring-green-100">
+          Kaydedildi.
+        </p>
+      )}
     </form>
   );
 }
@@ -51,14 +62,14 @@ function NumberField({
 }) {
   return (
     <div className="flex flex-col">
-      <label className="text-xs font-medium text-neutral-600">{label}</label>
+      <label className="text-xs font-medium text-slate-600">{label}</label>
       <input
         type="number"
         name={name}
         min={0}
         required
         defaultValue={defaultValue}
-        className="mt-1 w-20 rounded-lg border border-neutral-300 px-2 py-1.5 focus:border-neutral-500 focus:outline-none"
+        className="mt-1 w-20 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 shadow-sm transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none"
       />
     </div>
   );

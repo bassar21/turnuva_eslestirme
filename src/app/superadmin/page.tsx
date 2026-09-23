@@ -24,27 +24,39 @@ export default async function SuperadminPage({
   const tournament: TournamentSlug = t && isTournamentSlug(t) ? t : "satranc";
 
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 space-y-6 px-6 py-10">
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900">Superadmin Paneli</h1>
-          <p className="text-sm text-neutral-500">Giriş: {session.username}</p>
+    <div className="flex-1">
+      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
+        <div className="mx-auto w-full max-w-5xl px-6 py-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold tracking-wide text-slate-400 uppercase">
+                Superadmin
+              </p>
+              <h1 className="text-xl font-bold text-slate-900">Kontrol Paneli</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-slate-500">{session.username}</span>
+              <form action={logout}>
+                <button className="text-sm font-medium text-slate-400 transition hover:text-red-600">
+                  Çıkış yap
+                </button>
+              </form>
+            </div>
+          </div>
+          <div className="mt-4">
+            <Nav current={tab} />
+          </div>
         </div>
-        <form action={logout}>
-          <button className="text-sm text-neutral-400 hover:text-neutral-700 hover:underline">
-            Çıkış yap
-          </button>
-        </form>
       </header>
 
-      <Nav current={tab} />
-
-      {tab === "genel" && <OverviewTab />}
-      {tab === "katilimcilar" && <ParticipantsTab tournament={tournament} />}
-      {tab === "eslestirmeler" && <PairingsTab tournament={tournament} />}
-      {tab === "sonuclar" && <ResultsTab tournament={tournament} />}
-      {tab === "adminler" && <AdminsTab />}
-      {tab === "listeler" && <OptionsTab />}
-    </main>
+      <main className="mx-auto w-full max-w-5xl px-6 py-8">
+        {tab === "genel" && <OverviewTab />}
+        {tab === "katilimcilar" && <ParticipantsTab tournament={tournament} />}
+        {tab === "eslestirmeler" && <PairingsTab tournament={tournament} />}
+        {tab === "sonuclar" && <ResultsTab tournament={tournament} />}
+        {tab === "adminler" && <AdminsTab />}
+        {tab === "listeler" && <OptionsTab />}
+      </main>
+    </div>
   );
 }

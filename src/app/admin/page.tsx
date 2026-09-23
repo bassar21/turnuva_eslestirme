@@ -39,103 +39,122 @@ export default async function AdminPage({
   const rounds = groupByRound(matches);
 
   return (
-    <main className="mx-auto w-full max-w-4xl flex-1 space-y-8 px-6 py-10">
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900">
-            {TOURNAMENTS[scope].name} — Admin Paneli
-          </h1>
-          <p className="text-sm text-neutral-500">Giriş: {session.username}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          {session.role === "superadmin" && (
-            <div className="flex gap-2 text-sm">
-              <Link
-                href="/admin?t=satranc"
-                className={`rounded-full px-3 py-1 ${scope === "satranc" ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600"}`}
-              >
-                Satranç
-              </Link>
-              <Link
-                href="/admin?t=mangala"
-                className={`rounded-full px-3 py-1 ${scope === "mangala" ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600"}`}
-              >
-                Mangala
-              </Link>
+    <div className="flex-1">
+      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-6 py-4">
+          <div>
+            <p className="text-xs font-semibold tracking-wide text-slate-400 uppercase">
+              Admin Paneli
+            </p>
+            <h1 className="text-xl font-bold text-slate-900">{TOURNAMENTS[scope].name}</h1>
+          </div>
+          <div className="flex items-center gap-3">
+            {session.role === "superadmin" && (
+              <div className="flex gap-1 rounded-full bg-slate-100 p-1 text-sm">
+                <Link
+                  href="/admin?t=satranc"
+                  className={`rounded-full px-3 py-1 font-medium transition ${scope === "satranc" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                >
+                  Satranç
+                </Link>
+                <Link
+                  href="/admin?t=mangala"
+                  className={`rounded-full px-3 py-1 font-medium transition ${scope === "mangala" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                >
+                  Mangala
+                </Link>
+              </div>
+            )}
+            <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
+              <span className="text-sm text-slate-500">{session.username}</span>
+              <form action={logout}>
+                <button className="text-sm font-medium text-slate-400 transition hover:text-red-600">
+                  Çıkış yap
+                </button>
+              </form>
             </div>
-          )}
-          <form action={logout}>
-            <button className="text-sm text-neutral-400 hover:text-neutral-700 hover:underline">
-              Çıkış yap
-            </button>
-          </form>
+          </div>
         </div>
       </header>
 
-      <section className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_280px]">
-        <div className="space-y-6">
-          {rounds.length === 0 ? (
-            <p className="rounded-xl border border-neutral-200 bg-neutral-50 p-6 text-center text-neutral-500">
-              Henüz eşleştirme girilmemiş.
-            </p>
-          ) : (
-            rounds.map(({ roundNo, list }) => (
-              <div key={roundNo} className="rounded-xl border border-neutral-200 bg-white shadow-sm">
-                <div className="border-b border-neutral-200 bg-neutral-50 px-5 py-3">
-                  <h2 className="font-semibold text-neutral-800">Tur {roundNo}</h2>
+      <main className="mx-auto w-full max-w-5xl px-6 py-8">
+        <section className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_300px]">
+          <div className="space-y-6">
+            {rounds.length === 0 ? (
+              <p className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-400">
+                Henüz eşleştirme girilmemiş.
+              </p>
+            ) : (
+              rounds.map(({ roundNo, list }) => (
+                <div
+                  key={roundNo}
+                  className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+                >
+                  <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/80 px-5 py-3.5">
+                    <h2 className="font-semibold text-slate-800">Tur {roundNo}</h2>
+                    <span className="text-xs font-medium text-slate-400">{list.length} maç</span>
+                  </div>
+                  <div className="divide-y divide-slate-100">
+                    {list.map((m) => (
+                      <div key={m.id} className="space-y-2.5 px-5 py-4">
+                        {m.status === "bye" ? (
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium text-slate-800">{m.p1_name}</span>
+                            <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+                              BAY GEÇTİ
+                            </span>
+                          </div>
+                        ) : (
+                          <>
+                            <p className="font-medium text-slate-800">
+                              {m.p1_name} <span className="text-slate-300">vs</span> {m.p2_name}
+                            </p>
+                            <MatchResultForm
+                              matchId={m.id}
+                              p1Name={m.p1_name}
+                              p2Name={m.p2_name ?? ""}
+                              existing={
+                                m.status === "done" && m.sets_played !== null && m.p1_sets !== null && m.p2_sets !== null
+                                  ? { setsPlayed: m.sets_played, p1Sets: m.p1_sets, p2Sets: m.p2_sets }
+                                  : undefined
+                              }
+                            />
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="divide-y divide-neutral-100">
-                  {list.map((m) => (
-                    <div key={m.id} className="space-y-2 px-5 py-4">
-                      {m.status === "bye" ? (
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium text-neutral-800">{m.p1_name}</span>
-                          <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
-                            BAY GEÇTİ
-                          </span>
-                        </div>
-                      ) : (
-                        <>
-                          <p className="font-medium text-neutral-800">
-                            {m.p1_name} <span className="text-neutral-400">vs</span> {m.p2_name}
-                          </p>
-                          <MatchResultForm
-                            matchId={m.id}
-                            p1Name={m.p1_name}
-                            p2Name={m.p2_name ?? ""}
-                            existing={
-                              m.status === "done" && m.sets_played !== null && m.p1_sets !== null && m.p2_sets !== null
-                                ? { setsPlayed: m.sets_played, p1Sets: m.p1_sets, p2Sets: m.p2_sets }
-                                : undefined
-                            }
-                          />
-                        </>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+              ))
+            )}
+          </div>
 
-        <aside className="space-y-3">
-          <h2 className="text-sm font-semibold text-neutral-500 uppercase">
-            Katılımcılar ({participants.length})
-          </h2>
-          <ul className="max-h-[70vh] space-y-1 overflow-y-auto rounded-xl border border-neutral-200 bg-white p-3 text-sm shadow-sm">
-            {participants.map((p) => (
-              <li key={p.id} className="text-neutral-700">
-                {p.full_name}{" "}
-                <span className="text-neutral-400">
-                  ({p.sinif} / {p.bolum} / {p.sube})
-                </span>
-              </li>
-            ))}
-          </ul>
-        </aside>
-      </section>
-    </main>
+          <aside className="space-y-3">
+            <h2 className="text-xs font-semibold tracking-wide text-slate-400 uppercase">
+              Katılımcılar ({participants.length})
+            </h2>
+            <ul className="max-h-[70vh] space-y-1 overflow-y-auto rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+              {participants.map((p) => (
+                <li key={p.id} className="flex items-start gap-2.5 rounded-lg px-2 py-1.5 text-sm">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[11px] font-semibold text-slate-500">
+                    {p.full_name.charAt(0).toUpperCase()}
+                  </span>
+                  <span>
+                    <span className="text-slate-800">{p.full_name}</span>{" "}
+                    <span className="block text-xs text-slate-400">
+                      {p.sinif} / {p.bolum} / {p.sube}
+                    </span>
+                  </span>
+                </li>
+              ))}
+              {participants.length === 0 && (
+                <li className="px-2 py-3 text-sm text-slate-400">Henüz katılımcı yok.</li>
+              )}
+            </ul>
+          </aside>
+        </section>
+      </main>
+    </div>
   );
 }
 

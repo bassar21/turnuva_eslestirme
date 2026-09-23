@@ -24,7 +24,7 @@ export async function ParticipantsTab({ tournament }: { tournament: TournamentSl
       <TournamentSwitcher current={tournament} tab="katilimcilar" />
 
       <div>
-        <h3 className="mb-2 text-sm font-semibold text-neutral-500 uppercase">
+        <h3 className="mb-2 text-xs font-semibold tracking-wide text-slate-400 uppercase">
           Çekiliş için kopyala — {TOURNAMENTS[tournament].name}
         </h3>
         <CopyBox
@@ -33,25 +33,25 @@ export async function ParticipantsTab({ tournament }: { tournament: TournamentSl
         />
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <table className="w-full text-sm">
-          <thead className="bg-neutral-50 text-left text-neutral-500">
+          <thead className="bg-slate-50 text-left text-xs font-semibold tracking-wide text-slate-400 uppercase">
             <tr>
-              <th className="px-4 py-2 font-medium">Ad Soyad</th>
-              <th className="px-4 py-2 font-medium">Sınıf</th>
-              <th className="px-4 py-2 font-medium">Bölüm</th>
-              <th className="px-4 py-2 font-medium">Şube</th>
-              <th className="px-4 py-2" />
+              <th className="px-4 py-3">Ad Soyad</th>
+              <th className="px-4 py-3">Sınıf</th>
+              <th className="px-4 py-3">Bölüm</th>
+              <th className="px-4 py-3">Şube</th>
+              <th className="px-4 py-3" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-neutral-100">
+          <tbody className="divide-y divide-slate-100">
             {participants.map((p) => (
-              <tr key={p.id}>
-                <td className="px-4 py-2 text-neutral-800">{p.full_name}</td>
-                <td className="px-4 py-2 text-neutral-600">{p.sinif}</td>
-                <td className="px-4 py-2 text-neutral-600">{p.bolum}</td>
-                <td className="px-4 py-2 text-neutral-600">{p.sube}</td>
-                <td className="px-4 py-2 text-right">
+              <tr key={p.id} className="transition hover:bg-slate-50/70">
+                <td className="px-4 py-2.5 font-medium text-slate-800">{p.full_name}</td>
+                <td className="px-4 py-2.5 text-slate-600">{p.sinif}</td>
+                <td className="px-4 py-2.5 text-slate-600">{p.bolum}</td>
+                <td className="px-4 py-2.5 text-slate-600">{p.sube}</td>
+                <td className="px-4 py-2.5 text-right">
                   <form action={deleteParticipantAction.bind(null, p.id)}>
                     <ActionButton variant="danger">Sil</ActionButton>
                   </form>
@@ -60,7 +60,7 @@ export async function ParticipantsTab({ tournament }: { tournament: TournamentSl
             ))}
             {participants.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-neutral-400">
+                <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
                   Henüz katılımcı yok.
                 </td>
               </tr>

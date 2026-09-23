@@ -29,39 +29,49 @@ export default async function TournamentPage({
   ]);
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 space-y-8 px-6 py-12">
-      <div className="flex items-center justify-between">
-        <div>
-          <Link href="/" className="text-sm text-neutral-400 hover:text-neutral-600">
+    <main className="flex-1 pb-16">
+      <div className={`bg-gradient-to-br ${meta.color}`}>
+        <div className="mx-auto w-full max-w-3xl px-6 pt-8 pb-10">
+          <Link
+            href="/"
+            className={`inline-flex items-center gap-1 text-sm ${meta.accent} opacity-80 transition hover:opacity-100`}
+          >
             ← Anasayfa
           </Link>
-          <h1 className="mt-1 text-2xl font-bold text-neutral-900">{meta.name}</h1>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+            <h1 className="text-3xl font-bold tracking-tight text-white">{meta.name}</h1>
+            <span
+              className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                tournament.registration_open
+                  ? "bg-green-400/20 text-green-100 ring-1 ring-green-300/30"
+                  : "bg-white/10 text-white/70 ring-1 ring-white/20"
+              }`}
+            >
+              Kayıt {tournament.registration_open ? "Açık" : "Kapalı"}
+            </span>
+          </div>
         </div>
-        <span
-          className={`rounded-full px-3 py-1 text-xs font-semibold ${
-            tournament.registration_open
-              ? "bg-green-100 text-green-800"
-              : "bg-neutral-200 text-neutral-600"
-          }`}
-        >
-          Kayıt {tournament.registration_open ? "Açık" : "Kapalı"}
-        </span>
       </div>
 
-      <section>
-        {tournament.registration_open ? (
-          <RegisterForm tournament={slug} options={options} />
-        ) : (
-          <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-6 text-center text-neutral-500">
-            Kayıtlar şu anda kapalı.
-          </div>
-        )}
-      </section>
+      <div className="mx-auto -mt-6 w-full max-w-3xl space-y-8 px-6">
+        <section>
+          {tournament.registration_open ? (
+            <RegisterForm tournament={slug} options={options} />
+          ) : (
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+              <p className="font-medium text-slate-700">Kayıtlar şu anda kapalı.</p>
+              <p className="mt-1 text-sm text-slate-500">
+                Kayıtlar tekrar açıldığında bu sayfadan kaydolabileceksiniz.
+              </p>
+            </div>
+          )}
+        </section>
 
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-neutral-800">Eşleştirmeler</h2>
-        <RoundsView rounds={rounds} />
-      </section>
+        <section className="space-y-3">
+          <h2 className="text-lg font-semibold text-slate-800">Eşleştirmeler</h2>
+          <RoundsView rounds={rounds} />
+        </section>
+      </div>
     </main>
   );
 }
