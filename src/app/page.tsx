@@ -10,9 +10,6 @@ export default function HomePage() {
       />
 
       <div className="flex w-full max-w-3xl flex-col items-center gap-4 text-center">
-        <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-4 py-1.5 text-xs font-semibold tracking-wide text-slate-500 uppercase shadow-sm backdrop-blur">
-          {SITE.schoolName}
-        </span>
         <h1 className="max-w-2xl text-4xl font-bold tracking-tight text-balance text-slate-900 sm:text-5xl">
           {SITE.welcomeMessage}
         </h1>
