@@ -9,7 +9,10 @@ export default function HomePage() {
         className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(79,70,229,0.12),transparent_45%),radial-gradient(circle_at_80%_30%,rgba(217,119,6,0.10),transparent_45%),radial-gradient(circle_at_50%_90%,rgba(15,23,42,0.06),transparent_50%)]"
       />
 
-      <div className="flex w-full max-w-3xl flex-col items-center gap-4 text-center">
+      <div className="flex w-full max-w-3xl flex-col items-center gap-3 text-center">
+        <span className="text-sm font-semibold tracking-wide text-indigo-600 uppercase">
+          {SITE.schoolName}
+        </span>
         <h1 className="max-w-2xl text-4xl font-bold tracking-tight text-balance text-slate-900 sm:text-5xl">
           {SITE.welcomeMessage}
         </h1>

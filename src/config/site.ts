@@ -1,7 +1,6 @@
 export const SITE = {
   schoolName: "Özel Adem Ceylan Final Teknik Koleji",
-  welcomeMessage:
-    "turnuva işlemlerine hoş geldiniz",
+  welcomeMessage: "Turnuva işlemlerine hoş geldiniz",
 };
 
 export type TournamentSlug = "satranc" | "mangala";
