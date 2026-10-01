@@ -168,13 +168,31 @@ export function formatParticipantsJSON(participants: Participant[]): string {
   );
 }
 
-/** Bir sonraki tura geçecek isimler: kazananlar + bay geçenler. */
-export function formatWinnersText(names: string[]): string {
-  return names.join("\n");
+/** Bir sonraki tura geçecek katılımcılar: kazananlar + bay geçenler. */
+export type WinnerEntry = {
+  fullName: string;
+  sinif: string | null;
+  bolum: string | null;
+  sube: string | null;
+};
+
+function classSuffix(sinif: string | null, bolum: string | null, sube: string | null): string {
+  const parts = [sinif, bolum, sube].filter((v): v is string => Boolean(v));
+  return parts.length ? ` (${parts.join(" / ")})` : "";
 }
 
-export function formatWinnersJSON(names: string[]): string {
-  return JSON.stringify(names, null, 2);
+export function formatWinnersText(winners: WinnerEntry[]): string {
+  return winners
+    .map((w) => `${w.fullName}${classSuffix(w.sinif, w.bolum, w.sube)}`)
+    .join("\n");
+}
+
+export function formatWinnersJSON(winners: WinnerEntry[]): string {
+  return JSON.stringify(
+    winners.map((w) => ({ name: w.fullName, sinif: w.sinif, bolum: w.bolum, sube: w.sube })),
+    null,
+    2
+  );
 }
 
 export function formatPairingsText(

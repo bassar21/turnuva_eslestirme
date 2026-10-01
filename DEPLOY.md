@@ -307,6 +307,91 @@ Kurulum tamamlandığında `https://DOMAIN_ADINIZ.com` adresi Cloudflare
 - 502/523 hatası alırsanız Nginx veya uygulama servisinin çalıştığından
   emin olun (`systemctl status nginx turnuva`).
 
+## Alternatif: Windows Bilgisayardan Beta Yayın (IIS + Cloudflare Tunnel)
+
+VDS almadan, kendi Windows bilgisayarınızdan **beta/test amaçlı** yayına
+almak için. Mimari:
+
+```
+İnternet → Cloudflare (TLS) → Tunnel → bu PC → IIS (:80, ters proxy) → Next.js (:3000, npm run start)
+```
+
+`cloudflared` PC'den Cloudflare'e **dışa doğru** bağlanır, hiçbir gelen port
+(80/443) internete açılmaz — modem/router'da port yönlendirmesi gerekmez.
+
+### a) Cloudflare Tunnel
+
+Zero Trust panelinden (`one.dash.cloudflare.com` → Networks → Tunnels) bir
+tünel oluşturup `cloudflared service install <TOKEN>` ile Windows servisi
+olarak kurun (`Get-Service Cloudflared` ile "Running" görmelisiniz).
+
+Panelde **Public Hostname** ekleyin:
+- Domain: kendi domaininiz
+- Service **Type: HTTP** (HTTPS değil — TLS zaten Cloudflare ucunda
+  sonlanıyor, IIS düz HTTP dinleyecek)
+- URL: `localhost:80`
+
+### b) IIS + URL Rewrite + ARR kurulumu
+
+Bu adım **yönetici yetkisi** gerektirir. PowerShell'i "Yönetici olarak
+çalıştır" ile açıp reponun kök dizininden:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\setup-iis.ps1
+```
+
+Bu betik sırasıyla: IIS rolünü etkinleştirir, URL Rewrite Module ve
+Application Request Routing (ARR)'ı indirip kurar, ARR proxy modunu açar ve
+`scripts\iis-web.config` dosyasını `C:\inetpub\wwwroot\web.config` olarak
+kopyalar (tüm istekleri `localhost:3000`'e yönlendiren ters proxy kuralı).
+
+Bittiğinde:
+
+```powershell
+iisreset
+```
+
+### c) Next.js prod sunucusu
+
+```powershell
+npm run build
+npm run start
+```
+
+Bu, `localhost:3000`'de dinler. Terminali kapatınca durur — sürekli açık
+kalması için (oturum açılışında otomatik başlasın diye) yine **yönetici
+olarak**:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\setup-autostart-task.ps1
+```
+
+Bu, "TurnuvaEslestirmeApp" adında bir Görev Zamanlayıcı kaydı oluşturur
+(`scripts\run-prod.cmd`'yi çalıştırır, çıktısını `scripts\run-prod.log`'a
+yazar). Kod güncellediğinizde `npm run build` çalıştırıp görevi yeniden
+başlatmanız yeterli: `Restart-ScheduledTask -TaskName TurnuvaEslestirmeApp`
+(veya görevi durdurup tekrar başlatın).
+
+### d) Doğrulama
+
+- `http://localhost` (bilgisayarınızda) → siteyi göstermeli (IIS → Next.js).
+- `https://DOMANINIZ` (dışarıdan) → siteyi göstermeli (Cloudflare → Tunnel →
+  IIS → Next.js).
+
+### Sorun giderme (Windows)
+
+- **Error 526 / Bad Gateway (Cloudflare):** Public Hostname servis tipi
+  muhtemelen hâlâ "HTTPS" — "HTTP" yapın, IIS'te SSL sertifikası yok.
+- **IIS'te "500 - Internal Server Error" veya boş sayfa:** ARR proxy modu
+  kapalı olabilir — `setup-iis.ps1`'in 4. adımını tekrar çalıştırın, sonra
+  `iisreset`.
+- **`localhost`'ta hiçbir şey dönmüyor:** `npm run start` çalışıyor mu
+  kontrol edin (`Get-NetTCPConnection -LocalPort 3000 -State Listen`).
+- Bu, tek bir Windows bilgisayara bağımlı bir **beta** kurulumdur — üretim
+  için VDS + Linux yolunu (bu dosyanın başındaki adımlar) kullanmanız
+  tavsiye edilir (yeniden başlatma, güç kesintisi gibi durumlarda VDS daha
+  güvenilirdir).
+
 ## 10) Yedekleme
 
 Veritabanını periyodik olarak yedeklemek için:

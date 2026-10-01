@@ -10,16 +10,23 @@ export type OptionRow = {
   active: boolean;
 };
 
+const NATURAL_ORDER = `
+  sort_order,
+  CASE WHEN value ~ '^[0-9]+$' THEN 0 ELSE 1 END,
+  CASE WHEN value ~ '^[0-9]+$' THEN value::int END,
+  value
+`;
+
 export async function listOptions(kind?: OptionKind) {
   if (kind) {
     const { rows } = await query<OptionRow>(
-      "SELECT * FROM options WHERE kind = $1 ORDER BY sort_order, value",
+      `SELECT * FROM options WHERE kind = $1 ORDER BY ${NATURAL_ORDER}`,
       [kind]
     );
     return rows;
   }
   const { rows } = await query<OptionRow>(
-    "SELECT * FROM options ORDER BY kind, sort_order, value"
+    `SELECT * FROM options ORDER BY kind, ${NATURAL_ORDER}`
   );
   return rows;
 }
@@ -27,7 +34,7 @@ export async function listOptions(kind?: OptionKind) {
 /** Kayıt formunun select'lerini besler: yalnızca aktif seçenekler. */
 export async function getActiveOptionsByKind(): Promise<Record<OptionKind, string[]>> {
   const { rows } = await query<OptionRow>(
-    "SELECT * FROM options WHERE active = true ORDER BY sort_order, value"
+    `SELECT * FROM options WHERE active = true ORDER BY ${NATURAL_ORDER}`
   );
   const result: Record<OptionKind, string[]> = { sinif: [], bolum: [], sube: [] };
   for (const row of rows) {

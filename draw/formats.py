@@ -37,8 +37,34 @@ _PARTICIPANT_LINE = re.compile(
 
 def parse_participants(text: str) -> list[Participant]:
     """'Ahmet Yılmaz (10 / Bilişim Teknolojileri / A)' veya sade 'Ahmet Yılmaz'
-    satırlarını ayrıştırır. Boş satırlar ve '#' ile başlayan satırlar atlanır."""
-    participants: list[Participant] = []
+    satırlarını ayrıştırır. Boş satırlar ve '#' ile başlayan satırlar atlanır.
+    Girdi '[' ile başlıyorsa formatParticipantsJSON çıktısı olarak (JSON dizi)
+    ayrıştırılır — Katılımcılar sekmesindeki "Çekiliş için kopyala" JSON
+    seçeneği doğrudan buraya yapıştırıldığında satırların isim sanılmasını
+    önler."""
+    stripped = text.strip()
+    if stripped.startswith("["):
+        try:
+            data = json.loads(stripped)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"JSON ayrıştırılamadı: {exc}") from exc
+        if not isinstance(data, list):
+            raise ValueError("JSON bir katılımcı dizisi olmalı.")
+        participants: list[Participant] = []
+        for idx, raw in enumerate(data, start=1):
+            if not isinstance(raw, dict) or "name" not in raw:
+                raise ValueError(f"{idx}. katılımcıda \"name\" alanı eksik.")
+            participants.append(
+                Participant(
+                    name=str(raw["name"]).strip(),
+                    sinif=str(raw["sinif"]).strip() if raw.get("sinif") else None,
+                    bolum=str(raw["bolum"]).strip() if raw.get("bolum") else None,
+                    sube=str(raw["sube"]).strip() if raw.get("sube") else None,
+                )
+            )
+        return participants
+
+    participants = []
     for raw_line in text.splitlines():
         line = raw_line.strip()
         if not line or line.startswith("#"):
@@ -155,6 +181,14 @@ def _self_test() -> None:
     )
     assert participants[0] == Participant("Ahmet Yılmaz", "10", "Bilişim Teknolojileri", "A")
     assert participants[1] == Participant("Mehmet Demir")
+
+    # JSON katılımcı listesi (Katılımcılar sekmesindeki JSON dışa aktarımı)
+    json_participants = parse_participants(
+        '[{"name": "Ahmet Yılmaz", "sinif": "10", "bolum": "Bilişim Teknolojileri", "sube": "A"}]'
+    )
+    assert json_participants == [
+        Participant("Ahmet Yılmaz", "10", "Bilişim Teknolojileri", "A")
+    ], f"JSON katılımcı ayrıştırma başarısız: {json_participants}"
 
     # vs varyantları ve en-dash
     varyant = parse_pairings_text("Ayşe Kaya VS Zeynep Çelik\nCan Öztürk – Deniz Ak")

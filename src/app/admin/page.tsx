@@ -99,7 +99,14 @@ export default async function AdminPage({
                       <div key={m.id} className="space-y-2.5 px-5 py-4">
                         {m.status === "bye" ? (
                           <div className="flex items-center justify-between">
-                            <span className="font-medium text-slate-800">{m.p1_name}</span>
+                            <span className="font-medium text-slate-800">
+                              {m.p1_name}
+                              {classInfo(m.p1_sinif, m.p1_bolum, m.p1_sube) && (
+                                <span className="ml-1.5 text-xs font-normal text-slate-400">
+                                  ({classInfo(m.p1_sinif, m.p1_bolum, m.p1_sube)})
+                                </span>
+                              )}
+                            </span>
                             <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
                               BAY GEÇTİ
                             </span>
@@ -107,7 +114,18 @@ export default async function AdminPage({
                         ) : (
                           <>
                             <p className="font-medium text-slate-800">
-                              {m.p1_name} <span className="text-slate-300">vs</span> {m.p2_name}
+                              {m.p1_name}
+                              {classInfo(m.p1_sinif, m.p1_bolum, m.p1_sube) && (
+                                <span className="ml-1.5 text-xs font-normal text-slate-400">
+                                  ({classInfo(m.p1_sinif, m.p1_bolum, m.p1_sube)})
+                                </span>
+                              )}{" "}
+                              <span className="text-slate-300">vs</span> {m.p2_name}
+                              {classInfo(m.p2_sinif, m.p2_bolum, m.p2_sube) && (
+                                <span className="ml-1.5 text-xs font-normal text-slate-400">
+                                  ({classInfo(m.p2_sinif, m.p2_bolum, m.p2_sube)})
+                                </span>
+                              )}
                             </p>
                             <MatchResultForm
                               matchId={m.id}
@@ -156,6 +174,11 @@ export default async function AdminPage({
       </main>
     </div>
   );
+}
+
+function classInfo(sinif: string | null, bolum: string | null, sube: string | null) {
+  if (!sinif && !bolum && !sube) return null;
+  return [sinif, bolum, sube].filter(Boolean).join(" / ");
 }
 
 function groupByRound(matches: Awaited<ReturnType<typeof listMatchesForTournament>>) {

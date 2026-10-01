@@ -1,5 +1,5 @@
 import { withTransaction, query } from "@/lib/db";
-import type { ParsedMatch } from "@/lib/pairings";
+import type { ParsedMatch, WinnerEntry } from "@/lib/pairings";
 import { findParticipantByName } from "@/lib/queries/participants";
 
 export type RoundRow = {
@@ -26,7 +26,22 @@ export type MatchRow = {
   status: "pending" | "done" | "bye";
   updated_by: string | null;
   updated_at: string | null;
+  p1_sinif: string | null;
+  p1_bolum: string | null;
+  p1_sube: string | null;
+  p2_sinif: string | null;
+  p2_bolum: string | null;
+  p2_sube: string | null;
 };
+
+const MATCH_SELECT = `
+  SELECT m.*,
+         p1.sinif AS p1_sinif, p1.bolum AS p1_bolum, p1.sube AS p1_sube,
+         p2.sinif AS p2_sinif, p2.bolum AS p2_bolum, p2.sube AS p2_sube
+  FROM matches m
+  LEFT JOIN participants p1 ON p1.id = m.p1_participant_id
+  LEFT JOIN participants p2 ON p2.id = m.p2_participant_id
+`;
 
 export class DuplicateRoundError extends Error {
   constructor(roundNo: number) {
@@ -50,7 +65,7 @@ export async function getRoundById(id: number) {
 
 export async function getMatchesForRound(roundId: number) {
   const { rows } = await query<MatchRow>(
-    "SELECT * FROM matches WHERE round_id = $1 ORDER BY match_no",
+    `${MATCH_SELECT} WHERE m.round_id = $1 ORDER BY m.match_no`,
     [roundId]
   );
   return rows;
@@ -133,15 +148,23 @@ export async function deleteRound(id: number) {
 }
 
 /**
- * Bir üst tura geçecek isimler: tamamlanmış maçların kazananları + bay
- * geçenler. Henüz sonuçlanmamış maç varsa `complete: false` döner.
+ * Bir üst tura geçecek katılımcılar: tamamlanmış maçların kazananları + bay
+ * geçenler, sınıf/bölüm/şube bilgileriyle birlikte. Henüz sonuçlanmamış maç
+ * varsa `complete: false` döner.
  */
 export async function getRoundWinners(roundId: number) {
   const matches = await getMatchesForRound(roundId);
   const pending = matches.filter((m) => m.status === "pending");
-  const names = matches
-    .filter((m) => m.status !== "pending")
-    .map((m) => m.winner_name)
-    .filter((n): n is string => Boolean(n));
-  return { complete: pending.length === 0, pendingCount: pending.length, names };
+  const winners: WinnerEntry[] = matches
+    .filter((m) => m.status !== "pending" && m.winner_name)
+    .map((m) => {
+      const isP1 = m.winner_name === m.p1_name;
+      return {
+        fullName: m.winner_name as string,
+        sinif: isP1 ? m.p1_sinif : m.p2_sinif,
+        bolum: isP1 ? m.p1_bolum : m.p2_bolum,
+        sube: isP1 ? m.p1_sube : m.p2_sube,
+      };
+    });
+  return { complete: pending.length === 0, pendingCount: pending.length, winners };
 }

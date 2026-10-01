@@ -4,6 +4,7 @@ import {
   formatPairingsJSON,
   formatPairingsText,
   formatParticipantsText,
+  formatWinnersJSON,
   formatWinnersText,
   parsePairings,
 } from "./pairings";
@@ -127,9 +128,22 @@ describe("üretim fonksiyonları", () => {
     expect(text).toBe("Ahmet Yılmaz (10 / Bilişim Teknolojileri / A)");
   });
 
-  it("formatWinnersText sade isim listesi üretir", () => {
-    expect(formatWinnersText(["Ahmet Yılmaz", "Can Öztürk"])).toBe(
-      "Ahmet Yılmaz\nCan Öztürk"
+  it("formatWinnersText sınıf bilgisi varsa ekler, yoksa sade isim yazar", () => {
+    const text = formatWinnersText([
+      { fullName: "Ahmet Yılmaz", sinif: "10", bolum: "Bilişim Teknolojileri", sube: "A" },
+      { fullName: "Can Öztürk", sinif: null, bolum: null, sube: null },
+    ]);
+    expect(text).toBe(
+      "Ahmet Yılmaz (10 / Bilişim Teknolojileri / A)\nCan Öztürk"
     );
+  });
+
+  it("formatWinnersJSON name/sinif/bolum/sube alanlarını üretir", () => {
+    const json = formatWinnersJSON([
+      { fullName: "Ahmet Yılmaz", sinif: "10", bolum: "Bilişim Teknolojileri", sube: "A" },
+    ]);
+    expect(JSON.parse(json)).toEqual([
+      { name: "Ahmet Yılmaz", sinif: "10", bolum: "Bilişim Teknolojileri", sube: "A" },
+    ]);
   });
 });

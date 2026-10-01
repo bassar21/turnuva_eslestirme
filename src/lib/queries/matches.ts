@@ -10,10 +10,14 @@ export type MatchWithContext = MatchRow & {
 
 export async function getMatchWithContext(id: number) {
   const { rows } = await query<MatchWithContext>(
-    `SELECT m.*, r.round_no, t.id AS tournament_id, t.slug AS tournament_slug
+    `SELECT m.*, r.round_no, t.id AS tournament_id, t.slug AS tournament_slug,
+            p1.sinif AS p1_sinif, p1.bolum AS p1_bolum, p1.sube AS p1_sube,
+            p2.sinif AS p2_sinif, p2.bolum AS p2_bolum, p2.sube AS p2_sube
      FROM matches m
      JOIN rounds r ON r.id = m.round_id
      JOIN tournaments t ON t.id = r.tournament_id
+     LEFT JOIN participants p1 ON p1.id = m.p1_participant_id
+     LEFT JOIN participants p2 ON p2.id = m.p2_participant_id
      WHERE m.id = $1`,
     [id]
   );
@@ -22,10 +26,14 @@ export async function getMatchWithContext(id: number) {
 
 export async function listMatchesForTournament(tournamentId: number) {
   const { rows } = await query<MatchWithContext>(
-    `SELECT m.*, r.round_no, t.id AS tournament_id, t.slug AS tournament_slug
+    `SELECT m.*, r.round_no, t.id AS tournament_id, t.slug AS tournament_slug,
+            p1.sinif AS p1_sinif, p1.bolum AS p1_bolum, p1.sube AS p1_sube,
+            p2.sinif AS p2_sinif, p2.bolum AS p2_bolum, p2.sube AS p2_sube
      FROM matches m
      JOIN rounds r ON r.id = m.round_id
      JOIN tournaments t ON t.id = r.tournament_id
+     LEFT JOIN participants p1 ON p1.id = m.p1_participant_id
+     LEFT JOIN participants p2 ON p2.id = m.p2_participant_id
      WHERE t.id = $1
      ORDER BY r.round_no, m.match_no`,
     [tournamentId]

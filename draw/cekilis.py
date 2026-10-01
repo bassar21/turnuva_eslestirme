@@ -83,12 +83,15 @@ class CekilisApp(tk.Tk):
         self.tournament = tournament
         self.round_no = round_no
 
+        self.participant_by_name = {p.name: p for p in participants}
+
         self.setup_frame.pack_forget()
         self.draw_frame = DrawFrame(
             self,
             tournament_label=TOURNAMENT_NAMES.get(tournament, tournament),
             round_no=round_no,
             total_matches=len(names) // 2 + (1 if self.bye_name else 0),
+            participant_by_name=self.participant_by_name,
             on_draw_one=self.draw_one,
             on_finish=self.finish_draw,
         )
@@ -232,6 +235,7 @@ class DrawFrame(tk.Frame):
         tournament_label: str,
         round_no: int,
         total_matches: int,
+        participant_by_name: dict[str, Participant],
         on_draw_one,
         on_finish,
     ) -> None:
@@ -240,6 +244,7 @@ class DrawFrame(tk.Frame):
         self.on_finish = on_finish
         self.total_matches = total_matches
         self.drawn_count = 0
+        self.participant_by_name = participant_by_name
 
         header_font = tkfont.Font(size=20, weight="bold")
         big_font = tkfont.Font(size=40, weight="bold")
@@ -306,14 +311,22 @@ class DrawFrame(tk.Frame):
         )
         self.finish_button.pack(side="left", padx=10)
 
+    def _label(self, name: str) -> str:
+        p = self.participant_by_name.get(name)
+        if p and (p.sinif or p.bolum or p.sube):
+            info = " / ".join(filter(None, [p.sinif, p.bolum, p.sube]))
+            return f"{name} ({info})"
+        return name
+
     def add_result(self, p1: str, p2: str | None) -> None:
         self.drawn_count += 1
+        l1, l2 = self._label(p1), self._label(p2) if p2 else None
         if p2 is None:
-            self.stage.config(text=f"{p1}\nBAY GEÇTİ", fg="#f59e0b")
-            self.results_box.insert("end", f"{self.drawn_count}. {p1} — BAY GEÇTİ")
+            self.stage.config(text=f"{l1}\nBAY GEÇTİ", fg="#f59e0b")
+            self.results_box.insert("end", f"{self.drawn_count}. {l1} — BAY GEÇTİ")
         else:
-            self.stage.config(text=f"{p1}\nVS\n{p2}", fg=ACCENT)
-            self.results_box.insert("end", f"{self.drawn_count}. {p1}  vs  {p2}")
+            self.stage.config(text=f"{l1}\nVS\n{l2}", fg=ACCENT)
+            self.results_box.insert("end", f"{self.drawn_count}. {l1}  vs  {l2}")
         self.progress_label.config(text=f"{self.drawn_count} / {self.total_matches} maç çekildi")
 
     def handle_draw(self) -> None:

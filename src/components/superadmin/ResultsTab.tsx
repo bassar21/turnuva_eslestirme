@@ -28,7 +28,7 @@ export async function ResultsTab({ tournament }: { tournament: TournamentSlug })
 }
 
 async function RoundResults({ roundId, title }: { roundId: number; title: string }) {
-  const { complete, pendingCount, names } = await getRoundWinners(roundId);
+  const { complete, pendingCount, winners } = await getRoundWinners(roundId);
 
   return (
     <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -49,7 +49,7 @@ async function RoundResults({ roundId, title }: { roundId: number; title: string
         <p className="mb-2 text-xs font-semibold tracking-wide text-slate-400 uppercase">
           Bir üst tur için kazananlar {!complete && "(eksik — tamamlanınca güncellenir)"}
         </p>
-        <CopyBox text={formatWinnersText(names)} json={formatWinnersJSON(names)} />
+        <CopyBox text={formatWinnersText(winners)} json={formatWinnersJSON(winners)} />
       </div>
     </div>
   );

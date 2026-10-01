@@ -34,11 +34,22 @@ export function RoundsView({ rounds }: { rounds: RoundWithMatches[] }) {
   );
 }
 
+function classInfo(sinif: string | null, bolum: string | null, sube: string | null) {
+  if (!sinif && !bolum && !sube) return null;
+  return [sinif, bolum, sube].filter(Boolean).join(" / ");
+}
+
 function MatchLine({ match }: { match: MatchRow }) {
+  const p1Info = classInfo(match.p1_sinif, match.p1_bolum, match.p1_sube);
+  const p2Info = classInfo(match.p2_sinif, match.p2_bolum, match.p2_sube);
+
   if (match.status === "bye") {
     return (
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="font-medium text-slate-800">{match.p1_name}</span>
+        <span className="font-medium text-slate-800">
+          {match.p1_name}
+          {p1Info && <span className="ml-1.5 text-xs font-normal text-slate-400">({p1Info})</span>}
+        </span>
         <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
           BAY GEÇTİ
         </span>
@@ -51,13 +62,15 @@ function MatchLine({ match }: { match: MatchRow }) {
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <div className="flex items-center gap-2.5 text-[15px]">
+      <div className="flex flex-wrap items-center gap-2.5 text-[15px]">
         <span className={p1Wins ? "font-semibold text-green-700" : "text-slate-700"}>
           {match.p1_name}
+          {p1Info && <span className="ml-1.5 text-xs font-normal text-slate-400">({p1Info})</span>}
         </span>
         <span className="text-xs font-medium text-slate-300">vs</span>
         <span className={p2Wins ? "font-semibold text-green-700" : "text-slate-700"}>
           {match.p2_name}
+          {p2Info && <span className="ml-1.5 text-xs font-normal text-slate-400">({p2Info})</span>}
         </span>
       </div>
       {match.status === "done" ? (
