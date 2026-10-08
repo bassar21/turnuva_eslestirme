@@ -63,6 +63,14 @@ export async function getRoundById(id: number) {
   return rows[0] ?? null;
 }
 
+export async function getRoundByNo(tournamentId: number, roundNo: number) {
+  const { rows } = await query<RoundRow>(
+    "SELECT * FROM rounds WHERE tournament_id = $1 AND round_no = $2",
+    [tournamentId, roundNo]
+  );
+  return rows[0] ?? null;
+}
+
 export async function getMatchesForRound(roundId: number) {
   const { rows } = await query<MatchRow>(
     `${MATCH_SELECT} WHERE m.round_id = $1 ORDER BY m.match_no`,

@@ -24,7 +24,7 @@ import {
   getNextRoundNo,
   DuplicateRoundError,
 } from "@/lib/queries/rounds";
-import { parsePairings, PairingsParseError } from "@/lib/pairings";
+import { parsePairings, PairingsParseError, type ParsedMatch } from "@/lib/pairings";
 
 export type ActionState = { error?: string; success?: string };
 function ok(message = "Kaydedildi."): ActionState {
@@ -119,6 +119,48 @@ export async function importPairingsAction(
   return {
     success: `Tur ${roundNo} oluşturuldu: ${parsed.matches.length} maç (${byeCount} bay). Yayınlamayı unutmayın.`,
   };
+}
+
+/**
+ * Site içi çekiliş aracının sonucunu kaydeder. Eşleştirmeler tarayıcıda
+ * (katılımcılar huzurunda) çekilmiş haliyle gelir — metin ayrıştırma
+ * yok, doğrudan createRoundWithMatches'e geçilir.
+ */
+export async function saveDrawAction(
+  tournament: TournamentSlug,
+  roundNo: number,
+  title: string,
+  matches: ParsedMatch[]
+): Promise<ActionState> {
+  const denied = await guard();
+  if (denied) return denied;
+
+  if (!isTournamentSlug(tournament)) return { error: "Geçersiz turnuva." };
+  const t = await getTournamentBySlug(tournament);
+  if (!t) return { error: "Turnuva bulunamadı." };
+
+  if (!Number.isInteger(roundNo) || roundNo < 1) return { error: "Geçersiz tur numarası." };
+  if (!Array.isArray(matches) || matches.length === 0) {
+    return { error: "Eşleştirme listesi boş." };
+  }
+  for (const m of matches) {
+    if (!m || typeof m.p1 !== "string" || !m.p1.trim()) {
+      return { error: "Geçersiz eşleştirme verisi." };
+    }
+    if (m.p2 !== null && typeof m.p2 !== "string") {
+      return { error: "Geçersiz eşleştirme verisi." };
+    }
+  }
+
+  try {
+    await createRoundWithMatches(t.id, roundNo, title.trim() || `Tur ${roundNo}`, matches);
+  } catch (err) {
+    if (err instanceof DuplicateRoundError) return { error: err.message };
+    throw err;
+  }
+
+  revalidateAll();
+  return { success: `Tur ${roundNo} oluşturuldu ve kaydedildi.` };
 }
 
 export async function publishRoundAction(roundId: number, published: boolean) {

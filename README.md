@@ -8,11 +8,11 @@ sistemi.
 
 1. **Superadmin** kaydı açar, öğrenciler `/satranc` veya `/mangala`
    sayfasından kaydolur.
-2. Superadmin kaydı kapatır, katılımcı listesini kopyalar.
-3. `draw/cekilis.py` (Tkinter) ile katılımcılar önünde rastgele çekiliş
-   yapılır; çıktı metin/JSON olarak üretilir.
-4. Superadmin bu çıktıyı panele yapıştırıp turu yayınlar — herkes
-   eşleştirmeleri site üzerinden görür.
+2. Superadmin kaydı kapatır.
+3. Superadmin panelinde "Eşleştirmeler" sekmesinden "Çekilişi Başlat"a
+   basar; katılımcılar huzurunda, tam ekran bir sayfada rastgele
+   eşleştirme yapılır ve doğrudan kaydedilir.
+4. Superadmin turu yayınlar — herkes eşleştirmeleri site üzerinden görür.
 5. Admin hesapları (satranç/mangala ayrı ayrı) maç sonuçlarını (set
    sayısı + skor) girer.
 6. Superadmin, tamamlanan turun kazananlarını (+ bay geçenler) tek
@@ -32,7 +32,7 @@ oluşturur/askıya alır.
 
 ## Geliştirme ortamı
 
-Gerekli: Node.js 20+, PostgreSQL, Python 3.9+ (yalnızca çekiliş aracı için).
+Gerekli: Node.js 20+, PostgreSQL.
 
 ```bash
 npm install
@@ -53,7 +53,6 @@ node scripts/hash-password.mjs "sifreniz"
 npm run test     # lib/pairings.ts birim testleri (vitest)
 npm run lint      # ESLint
 npx tsc --noEmit  # Tip kontrolü
-python draw/formats.py --self-test   # Python format katmanının site ile uyumu
 ```
 
 ## Proje yapısı
@@ -63,8 +62,8 @@ src/app/            Next.js sayfaları (/, /[tournament], /admin, /superadmin)
 src/app/actions/     Server action'lar (kayıt, giriş, superadmin işlemleri)
 src/lib/             DB erişimi, kimlik doğrulama, eşleştirme format katmanı
 src/lib/queries/     Veritabanı sorguları (tournaments, participants, rounds, matches, admins, options)
-src/components/      UI bileşenleri
-draw/                Python çekiliş aracı (Tkinter) + format ikizi
+src/components/      UI bileşenleri (çekiliş aracı dahil)
+draw/                Python çekiliş aracı (Tkinter) — yedek/çevrimdışı alternatif
 db/                  SQL şema ve başlangıç verisi
 DEPLOY.md            VDS'e kurulum adımları
 ```

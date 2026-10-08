@@ -1,6 +1,7 @@
+import Link from "next/link";
 import type { TournamentSlug } from "@/config/site";
 import { getTournamentBySlug } from "@/lib/queries/tournaments";
-import { getRoundsWithMatches } from "@/lib/queries/rounds";
+import { getRoundsWithMatches, getNextRoundNo } from "@/lib/queries/rounds";
 import { publishRoundAction, deleteRoundAction } from "@/app/actions/superadmin";
 import { TournamentSwitcher } from "@/components/superadmin/TournamentSwitcher";
 import { ImportPairingsForm } from "@/components/superadmin/ImportPairingsForm";
@@ -10,12 +11,35 @@ export async function PairingsTab({ tournament }: { tournament: TournamentSlug }
   const t = await getTournamentBySlug(tournament);
   if (!t) return null;
   const rounds = await getRoundsWithMatches(t.id);
+  const nextRoundNo = await getNextRoundNo(t.id);
 
   return (
     <div className="space-y-6">
       <TournamentSwitcher current={tournament} tab="eslestirmeler" />
 
-      <ImportPairingsForm tournament={tournament} />
+      <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-900 p-6 shadow-sm">
+        <div>
+          <h3 className="font-semibold text-white">Çekiliş Aracı</h3>
+          <p className="mt-0.5 text-sm text-slate-400">
+            Katılımcılar huzurunda, tam ekran rastgele eşleştirme — Tur {nextRoundNo}.
+          </p>
+        </div>
+        <Link
+          href={`/superadmin/cekilis?t=${tournament}&round=${nextRoundNo}`}
+          className="shrink-0 rounded-xl bg-green-500 px-5 py-2.5 text-sm font-bold text-slate-950 shadow-sm transition hover:bg-green-400"
+        >
+          Çekilişi Başlat
+        </Link>
+      </div>
+
+      <details className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <summary className="cursor-pointer px-6 py-4 text-sm font-medium text-slate-600">
+          Elle içe aktar (metin/JSON yapıştır) — opsiyonel
+        </summary>
+        <div className="border-t border-slate-200 p-4">
+          <ImportPairingsForm tournament={tournament} />
+        </div>
+      </details>
 
       <div className="space-y-3">
         {rounds.length === 0 && (
