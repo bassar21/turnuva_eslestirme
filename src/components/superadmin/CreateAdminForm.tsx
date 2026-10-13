@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { createAdminAction, type ActionState } from "@/app/actions/superadmin";
 import { inputClass } from "@/components/ui";
 
@@ -8,6 +8,7 @@ const initialState: ActionState = {};
 
 export function CreateAdminForm() {
   const [state, formAction, pending] = useActionState(createAdminAction, initialState);
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <form
@@ -23,13 +24,22 @@ export function CreateAdminForm() {
         </div>
         <div>
           <label className="block text-xs font-medium text-slate-600">Şifre</label>
-          <input
-            name="password"
-            type="password"
-            required
-            minLength={6}
-            className={`${inputClass} text-sm`}
-          />
+          <div className="flex gap-1.5">
+            <input
+              name="password"
+              type={showPassword ? "text" : "password"}
+              required
+              minLength={6}
+              className={`${inputClass} text-sm`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="shrink-0 rounded-lg border border-slate-300 px-2.5 text-xs font-medium text-slate-500 transition hover:bg-slate-50"
+            >
+              {showPassword ? "Gizle" : "Göster"}
+            </button>
+          </div>
         </div>
         <div>
           <label className="block text-xs font-medium text-slate-600">Turnuva</label>

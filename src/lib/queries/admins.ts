@@ -63,3 +63,15 @@ export async function setAdminSuspended(id: number, suspended: boolean) {
 export async function resetAdminPassword(id: number, passwordHash: string) {
   await query("UPDATE admins SET password_hash = $2 WHERE id = $1", [id, passwordHash]);
 }
+
+export async function deleteAdmin(id: number) {
+  await query("DELETE FROM admins WHERE id = $1", [id]);
+}
+
+export async function setAdminScope(id: number, scope: TournamentSlug) {
+  const { rows } = await query<AdminRow>(
+    "UPDATE admins SET scope = $2 WHERE id = $1 RETURNING *",
+    [id, scope]
+  );
+  return rows[0] ?? null;
+}

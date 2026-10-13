@@ -69,7 +69,7 @@ export async function PairingsTab({ tournament }: { tournament: TournamentSlug }
                   )}
                 </div>
                 <p className="mt-0.5 text-xs text-slate-500">
-                  {round.matches.length} maç · {byeCount} bay · {doneCount} sonuçlanmış
+                  {round.matches.length} maç · {byeCount} direkt geçiş · {doneCount} sonuçlanmış
                 </p>
               </div>
               <div className="flex gap-2">

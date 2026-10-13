@@ -1,9 +1,10 @@
-import { TOURNAMENTS } from "@/config/site";
 import { listAdmins } from "@/lib/queries/admins";
 import { setAdminSuspendedAction } from "@/app/actions/superadmin";
 import { ActionButton } from "@/components/superadmin/ActionButton";
 import { CreateAdminForm } from "@/components/superadmin/CreateAdminForm";
 import { ResetPasswordForm } from "@/components/superadmin/ResetPasswordForm";
+import { ChangeScopeForm } from "@/components/superadmin/ChangeScopeForm";
+import { DeleteAdminButton } from "@/components/superadmin/DeleteAdminButton";
 
 export async function AdminsTab() {
   const admins = await listAdmins();
@@ -27,7 +28,9 @@ export async function AdminsTab() {
             {admins.map((a) => (
               <tr key={a.id} className="transition hover:bg-slate-50/70">
                 <td className="px-4 py-2.5 font-medium text-slate-800">{a.username}</td>
-                <td className="px-4 py-2.5 text-slate-600">{TOURNAMENTS[a.scope].name}</td>
+                <td className="px-4 py-2.5 text-slate-600">
+                  <ChangeScopeForm adminId={a.id} scope={a.scope} />
+                </td>
                 <td className="px-4 py-2.5">
                   {a.suspended ? (
                     <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">
@@ -43,11 +46,14 @@ export async function AdminsTab() {
                   <ResetPasswordForm adminId={a.id} />
                 </td>
                 <td className="px-4 py-2.5 text-right">
-                  <form action={setAdminSuspendedAction.bind(null, a.id, !a.suspended)}>
-                    <ActionButton variant={a.suspended ? "primary" : "danger"}>
-                      {a.suspended ? "Kullanıma Aç" : "Askıya Al"}
-                    </ActionButton>
-                  </form>
+                  <div className="flex justify-end gap-2">
+                    <form action={setAdminSuspendedAction.bind(null, a.id, !a.suspended)}>
+                      <ActionButton variant={a.suspended ? "primary" : "muted"}>
+                        {a.suspended ? "Kullanıma Aç" : "Askıya Al"}
+                      </ActionButton>
+                    </form>
+                    <DeleteAdminButton adminId={a.id} username={a.username} />
+                  </div>
                 </td>
               </tr>
             ))}

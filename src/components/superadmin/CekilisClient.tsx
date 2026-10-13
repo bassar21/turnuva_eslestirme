@@ -61,7 +61,7 @@ export function CekilisClient({
   const [saved, setSaved] = useState(false);
 
   const backHref = `/superadmin?tab=eslestirmeler&t=${tournament}`;
-  const byeNote = participants.length % 2 === 1 ? " (1 kişi bay geçecek)" : "";
+  const byeNote = participants.length % 2 === 1 ? " (1 kişi direkt geçecek)" : "";
 
   function startDraw() {
     const shuffled = secureShuffle(participants.map((p) => p.fullName));
@@ -153,7 +153,7 @@ export function CekilisClient({
                   <p className="text-3xl font-bold text-amber-400">
                     {labelFor(stage.p1, byName)}
                     <br />
-                    BAY GEÇTİ
+                    DİREKT GEÇTİ
                   </p>
                 ) : (
                   <p className="text-3xl font-bold text-green-400">
@@ -170,17 +170,6 @@ export function CekilisClient({
               <p className="mt-4 text-sm text-slate-500">
                 {matches.length} / {totalMatches} maç çekildi
               </p>
-            </div>
-
-            <div className="max-h-64 overflow-auto rounded-2xl border border-slate-700 bg-slate-800 p-4">
-              <ol className="space-y-1 font-mono text-sm text-slate-300">
-                {matches.map((m, idx) => (
-                  <li key={idx}>
-                    {idx + 1}. {labelFor(m.p1, byName)}
-                    {m.p2 === null ? " — BAY GEÇTİ" : `  vs  ${labelFor(m.p2, byName)}`}
-                  </li>
-                ))}
-              </ol>
             </div>
 
             <div className="flex justify-center gap-3">
@@ -200,6 +189,17 @@ export function CekilisClient({
               >
                 Çekilişi Bitir → Sonuçlar
               </button>
+            </div>
+
+            <div className="max-h-64 overflow-auto rounded-2xl border border-slate-700 bg-slate-800 p-4">
+              <ol className="space-y-1 font-mono text-sm text-slate-300">
+                {matches.map((m, idx) => (
+                  <li key={idx}>
+                    {idx + 1}. {labelFor(m.p1, byName)}
+                    {m.p2 === null ? " — DİREKT GEÇTİ" : `  vs  ${labelFor(m.p2, byName)}`}
+                  </li>
+                ))}
+              </ol>
             </div>
           </div>
         )}

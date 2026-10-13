@@ -23,7 +23,7 @@ export class PairingsParseError extends Error {
 }
 
 const VS_SEPARATOR = /\s+(?:vs|VS|Vs)\s+|\s+–\s+/;
-const BYE_PATTERN = /^(.+?)\s*[-–]\s*BAY(?:\s+GE[ÇC]T[İI])?$/i;
+const BYE_PATTERN = /^(.+?)\s*[-–]\s*(?:BAY|D[İI]REKT)(?:\s+GE[ÇC]T[İI])?$/i;
 const LEADING_NUMBER = /^\s*\d+[.)]\s*/;
 const HEADER_PATTERN = /^#.*?TUR\s*(\d+)/i;
 
@@ -118,7 +118,7 @@ function parsePairingsText(text: string): ParsedPairings {
     if (byeMatch) {
       const name = byeMatch[1].trim();
       if (!name) {
-        throw new PairingsParseError(`Satır ${lineNo}: bay geçen isim boş.`, lineNo);
+        throw new PairingsParseError(`Satır ${lineNo}: direkt geçen isim boş.`, lineNo);
       }
       matches.push({ p1: name, p2: null });
       return;
@@ -127,7 +127,7 @@ function parsePairingsText(text: string): ParsedPairings {
     const parts = withoutNumber.split(VS_SEPARATOR);
     if (parts.length !== 2) {
       throw new PairingsParseError(
-        `Satır ${lineNo}: "${line}" anlaşılamadı. Beklenen biçim: "İsim1 vs İsim2" veya "İsim - BAY GEÇTİ".`,
+        `Satır ${lineNo}: "${line}" anlaşılamadı. Beklenen biçim: "İsim1 vs İsim2" veya "İsim - DİREKT GEÇTİ".`,
         lineNo
       );
     }
@@ -204,7 +204,7 @@ export function formatPairingsText(
   const body = matches
     .map((m, idx) =>
       m.p2 === null
-        ? `${idx + 1}. ${m.p1} - BAY GEÇTİ`
+        ? `${idx + 1}. ${m.p1} - DİREKT GEÇTİ`
         : `${idx + 1}. ${m.p1} vs ${m.p2}`
     )
     .join("\n");

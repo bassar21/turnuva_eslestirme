@@ -26,7 +26,7 @@ export function ImportPairingsForm({ tournament }: { tournament: TournamentSlug 
           name="pairingsText"
           required
           rows={8}
-          placeholder={"# SATRANÇ - TUR 1\n1. Ahmet Yılmaz vs Mehmet Demir\n2. Can Öztürk - BAY GEÇTİ"}
+          placeholder={"# SATRANÇ - TUR 1\n1. Ahmet Yılmaz vs Mehmet Demir\n2. Can Öztürk - DİREKT GEÇTİ"}
           className={`${inputClass} font-mono text-sm`}
         />
       </div>

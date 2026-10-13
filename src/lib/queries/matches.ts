@@ -55,7 +55,7 @@ export async function submitMatchResult(
     throw new InvalidResultError("Maç bulunamadı.");
   }
   if (match.status === "bye") {
-    throw new InvalidResultError("Bay geçen bir maça sonuç girilemez.");
+    throw new InvalidResultError("Direkt geçen bir maça sonuç girilemez.");
   }
   if (!match.p2_name) {
     throw new InvalidResultError("Bu maçın ikinci oyuncusu yok.");

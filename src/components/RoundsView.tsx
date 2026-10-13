@@ -51,7 +51,7 @@ function MatchLine({ match }: { match: MatchRow }) {
           {p1Info && <span className="ml-1.5 text-xs font-normal text-slate-400">({p1Info})</span>}
         </span>
         <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
-          BAY GEÇTİ
+          DİREKT GEÇTİ
         </span>
       </div>
     );

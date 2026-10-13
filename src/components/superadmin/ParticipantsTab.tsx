@@ -33,6 +33,10 @@ export async function ParticipantsTab({ tournament }: { tournament: TournamentSl
         />
       </div>
 
+      <p className="text-sm font-medium text-slate-500">
+        Toplam {participants.length} katılımcı
+      </p>
+
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-left text-xs font-semibold tracking-wide text-slate-400 uppercase">

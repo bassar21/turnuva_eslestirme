@@ -15,6 +15,8 @@ import {
   createAdmin,
   setAdminSuspended,
   resetAdminPassword,
+  setAdminScope,
+  deleteAdmin,
   DuplicateAdminError,
 } from "@/lib/queries/admins";
 import {
@@ -117,7 +119,7 @@ export async function importPairingsAction(
   const byeCount = parsed.matches.filter((m) => m.p2 === null).length;
   revalidateAll();
   return {
-    success: `Tur ${roundNo} oluşturuldu: ${parsed.matches.length} maç (${byeCount} bay). Yayınlamayı unutmayın.`,
+    success: `Tur ${roundNo} oluşturuldu: ${parsed.matches.length} maç (${byeCount} direkt geçiş). Yayınlamayı unutmayın.`,
   };
 }
 
@@ -211,7 +213,7 @@ export async function createAdminAction(
   }
 
   revalidatePath("/superadmin");
-  return { success: `${username} (${scope}) hesabı oluşturuldu.` };
+  return { success: `${username} (${scope}) hesabı oluşturuldu. Şifre: ${password}` };
 }
 
 export async function setAdminSuspendedAction(adminId: number, suspended: boolean) {
@@ -219,6 +221,30 @@ export async function setAdminSuspendedAction(adminId: number, suspended: boolea
   if (denied) throw new Error(denied.error);
   await setAdminSuspended(adminId, suspended);
   revalidatePath("/superadmin");
+}
+
+export async function deleteAdminAction(adminId: number) {
+  const denied = await guard();
+  if (denied) throw new Error(denied.error);
+  await deleteAdmin(adminId);
+  revalidatePath("/superadmin");
+}
+
+export async function setAdminScopeAction(
+  _prev: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const denied = await guard();
+  if (denied) return denied;
+
+  const adminId = Number(formData.get("adminId"));
+  const scope = String(formData.get("scope") ?? "");
+  if (!Number.isInteger(adminId)) return { error: "Geçersiz hesap." };
+  if (!isTournamentSlug(scope)) return { error: "Geçersiz turnuva." };
+
+  await setAdminScope(adminId, scope);
+  revalidateAll();
+  return ok("Turnuva güncellendi.");
 }
 
 export async function resetAdminPasswordAction(
@@ -235,7 +261,7 @@ export async function resetAdminPasswordAction(
 
   await resetAdminPassword(adminId, hashPassword(password));
   revalidatePath("/superadmin");
-  return ok();
+  return ok(`Şifre güncellendi: ${password}`);
 }
 
 // --- Sınıf / bölüm / şube listeleri ---------------------------------------
